@@ -29,7 +29,7 @@ db.connect(err => {
 //     console.log(res);
 // });
 
-db.query(`INSERT INTO entries(name, content) VALUES ('Kepsnys', 'Jautienos išpjovos kepsyns')`);
+// db.query(`INSERT INTO entries(name, content) VALUES ('Kepsnys', 'Jautienos išpjovos kepsyns')`);
 
 //db.query(`UPDATE entries SET name = 'Updateintas Sandra' WHERE id = 2`)
 
@@ -37,9 +37,9 @@ db.query(`INSERT INTO entries(name, content) VALUES ('Kepsnys', 'Jautienos išpj
 
 //db.query(`DELETE FROM entries WHERE id > 3`);
 
-db.query(`SELECT * FROM entries`, (err, res) => {
-    if(err) {
-        console.log(err);
-    }
-    console.log(res);
-});
+// db.query(`SELECT * FROM entries`, (err, res) => {
+//     if(err) {
+//         console.log(err);
+//     }
+//     console.log(res);
+// });
