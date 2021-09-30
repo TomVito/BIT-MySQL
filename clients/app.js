@@ -1,6 +1,8 @@
 const express = require('express');
+const hbs = require('express-handlebars');
 const app = express();
 const mysql = require('mysql');
+const path = require('path');
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -15,10 +17,20 @@ db.connect(err => {
             return;
     }
     console.log('Connection to MySQL database is successful');
-    });
+});
+
+app.engine('hbs', hbs({
+    extname: 'hbs',
+    defaultLayout: 'layout',
+    layoutsDir: __dirname + '/views/template'
+}));
+
+app.set('views', path.join(__dirname, '/views/'));
+
+app.set('view engine', 'hbs');
 
 app.get('/', (req, res) => {
-    res.send('Test');
+    res.render('add-company');
 });
 
 app.listen(3000);
