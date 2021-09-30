@@ -10,10 +10,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "^5.1.1",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.4",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.13",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "validator": "^13.6.0",
+    "wysiwyg-editor-node-sdk": "^4.0.5"
   }
 }
