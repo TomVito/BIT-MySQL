@@ -1,0 +1,32 @@
+<h1 class="mt-5 mb-5">List of all clients</h1>
+
+{{#if messages}}
+    <div class="alert alert-{{status}}">{{messages}}</div>
+{{/if}}
+
+<table class="table table-striped text-center">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Photo</th>
+        <th>Options</th>
+    </tr>
+
+    {{#each customers}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{name}}</td>
+            <td>{{surname}}</td>
+            <td>{{phone}}</td>
+            <td>{{email}}</td>
+            <td><img class="logo" src="/uploads/{{photo}}" width="50px" height="50px" alt="photo"></td>
+            <td>
+                <a href="/edit-client/{{id}}" class="btn btn-primary">Edit</a>
+                <a href="/delete-client/{{id}}" class="btn btn-danger btn-delete-client">Delete</a>
+            </td>
+        </tr>
+    {{/each}}
+</table>

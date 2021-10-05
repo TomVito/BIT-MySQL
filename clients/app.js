@@ -3,6 +3,8 @@ const hbs = require('express-handlebars');
 const app = express();
 const path = require('path');
 const db = require('./db/connection')
+const companiesController = require('./controllers/companies');
+const clientsController = require('./controllers/clients');
 
 app.use(express.urlencoded({
     extended: false
@@ -18,36 +20,16 @@ app.set('views', path.join(__dirname, '/views/'));
 
 app.set('view engine', 'hbs');
 
+app.use('/static', express.static('static'));
+app.use('/uploads', express.static('uploads'));
+app.use('/static/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')));
+app.use('/static/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')));
+
+app.use('/', companiesController);
+app.use('/', clientsController);
+
 app.get('/', (req, res) => {
-    res.render('add-company');
-});
-
-app.get('/add-company', (req, res) => {
-    res.render('add-company');
-});
-
-app.post('/add-company', (req, res) => {
-    
-    let companyName     = req.body.name;
-    let companyAddress  = req.body.address;
-
-    db.query(`SELECT * FROM companies WHERE name = '${companyName}'`, (err, resp) => {
-
-        if(resp.length == 0) {
-            
-            db.query(`INSERT INTO companies (name, address) 
-                    VALUES ( '${companyName}' , '${companyAddress}' )`
-            , err => {
-                if(err) {
-                    console.log(err);
-                    return;
-                }
-                res.redirect('/?m=Company successfully added');
-            });
-        } else {
-            res.redirect('/?m=Company with that name already exists');
-        }
-    });
+    res.render('template/index');
 });
 
 app.listen(3000);

@@ -1,0 +1,26 @@
+<h1 class="mt-5 mb-5">List of all companies</h1>
+
+{{#if messages}}
+    <div class="alert alert-{{status}}">{{messages}}</div>
+{{/if}}
+
+<table class="table table-striped text-center">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Options</th>
+    </tr>
+
+    {{#each companies}}
+        <tr>
+            <td>{{id}}</td>
+            <td>{{name}}</td>
+            <td>{{address}}</td>
+            <td>
+                <a href="/edit-company/{{id}}" class="btn btn-primary">Edit</a>
+                <a href="/delete-company/{{id}}" class="btn btn-danger btn-delete-company">Delete</a>
+            </td>
+        </tr>
+    {{/each}}
+</table>

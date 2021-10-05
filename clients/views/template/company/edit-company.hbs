@@ -1,0 +1,18 @@
+<h1>Edit company</h1>
+<div class="pt-3"></div>
+{{#if messages}}
+    <div class="alert alert-{{status}}">{{messages}}</div>
+{{/if}}
+{{#each edit}}
+<form method="post" action="/edit-company/{{id}}">
+    <div class="mb-3">
+        <label for="name" class="form-label">Company name</label>
+        <input type="text" name="name" id="name" class="form-control" value="{{name}}" />
+    </div>
+    <div class="mb-3">
+        <label for="address" class="form-label">Company address</label>
+        <input type="text" name="address" id="address" class="form-control" value="{{address}}" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+{{/each}}
+ </form>

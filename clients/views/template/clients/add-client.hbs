@@ -1,0 +1,40 @@
+<h1>New client</h1>
+<div class="pt-3"></div>
+<form method="post" action="/add-client" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" name="name" id="name" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="surname" class="form-label">Surname</label>
+        <input type="text" name="surname" id="surname" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="phone" class="form-label">Phone</label>
+        <input type="tel" name="phone" id="phone" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="text" name="email" id="email" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="photo" class="form-label">Photo</label>
+        <input type="file" name="photo" id="photo" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="comments" class="form-label">Comments</label>
+        <textarea name="comments" id="comments" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="company" class="form-label">Company</label>
+        <select name="company" id="company" class="form-control">
+            <option value="0">Unemployed</option> 
+            {{#each companies}}
+            <option value="{{id}}">{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+ </form>
+
+ <div class="pt-5"></div>
