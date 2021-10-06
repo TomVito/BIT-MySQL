@@ -29,9 +29,14 @@
         <label for="comments" class="form-label">Comments</label>
         <input type="text" name="comments" id="comments" class="form-control" value="{{comments}}" />
     </div>
-     <div class="mb-3">
-        <label for="company_id" class="form-label">Company ID</label>
-        <input type="text" name="company_id" id="company_id" class="form-control" value="{{company_id}}" />
+      <div class="mb-3">
+        <label for="company" class="form-label">Company</label>
+        <select name="company" id="company" class="form-control">
+            <option value="0">Unemployed</option> 
+            {{#each companies}}
+            <option value="{{id}}">{{name}}</option>
+            {{/each}}
+        </select>
     </div>
     <button type="submit" class="btn btn-primary">Add</button>
 {{/each}}

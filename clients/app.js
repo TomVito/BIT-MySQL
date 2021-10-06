@@ -5,6 +5,13 @@ const path = require('path');
 const db = require('./db/connection')
 const companiesController = require('./controllers/companies');
 const clientsController = require('./controllers/clients');
+const session = require('express-session');
+
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true
+}));
 
 app.use(express.urlencoded({
     extended: false

@@ -7,34 +7,55 @@
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.88.1">
     <title>Clients</title>
-
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/sticky-footer-navbar/">
-
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
-
+    <style>
+        .form-signin {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
+        .form-signin .checkbox {
+            font-weight: 400;
+        }
+        .form-signin .form-floating:focus-within {
+            z-index: 2;
+        }
+        .form-signin input[type="email"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }   
+    </style>
   </head>
   <body class="d-flex flex-column h-100">
     <header class="mb-5">
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
             <div class="container">
-            <a class="navbar-brand" href="/">Clients</a>
+            <a class="navbar-brand" href="/">Admin</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/list-companies">Companies List</a>
+                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Companies</a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdown01">
+                    <li><a class="dropdown-item" href="/list-companies">Companies list</a></li>
+                    <li><a class="dropdown-item" href="/add-company">Add company</a></li>
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/add-company">Add Company</a>
-                </li>
-                 <li class="nav-item">
-                    <a class="nav-link" href="/list-clients">Clients list</a>
-                </li>
-                  <li class="nav-item">
-                    <a class="nav-link" href="/add-client">Add client</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-bs-toggle="dropdown" aria-expanded="false">Clients</a>
+                    <ul class="dropdown-menu" aria-labelledby="dropdown01">
+                    <li><a class="dropdown-item" href="/list-clients">Clients list</a></li>
+                    <li><a class="dropdown-item" href="/add-client">Add client</a></li>
+                    </ul>
                 </li>
                 </ul>
             </div>
@@ -47,8 +68,8 @@
         </div>
     </main>
     <script src="/static/js/bootstrap.bundle.min.js"></script>
-     <script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
-    <script src="/js/common.js"></script>
+    <script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
+    <script src="/static/js/common.js"></script>
     <script>
         tinymce.init({
         selector: '#comments'

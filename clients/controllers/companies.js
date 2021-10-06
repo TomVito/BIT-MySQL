@@ -61,10 +61,12 @@ app.get('/list-companies', (req, res) => {
 
 app.get('/edit-company/:id', (req, res) =>{
     let id = req.params.id;
+    let messages = req.query.m;
+    let status = req.query.s;
 
     db.query(`SELECT * FROM companies WHERE id = '${id}'`, (err, resp) => {
         if(!err) {
-            res.render('template/company/edit-company', {edit : resp});
+            res.render('template/company/edit-company', {edit : resp, messages, status});
         }
     });
 });

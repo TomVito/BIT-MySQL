@@ -3,7 +3,8 @@ const app = express.Router();
 const path = require('path');
 const db = require('../db/connection');
 const validator = require('validator');
-const multer  = require('multer')
+const multer  = require('multer');
+const e = require('express');
 const storage = multer.diskStorage({
     destination: 'uploads/',
     filename: function(req, file, callback) {
@@ -50,7 +51,7 @@ app.post('/add-client', upload.single('photo'), (req, res) => {
     let clientSurname       = req.body.surname;
     let clientPhone         = req.body.phone;
     let clientEmail         = req.body.email;
-    let clientPhoto         = (!req.files) ? '' : req.file.filename;
+    let clientPhoto         = (req.file) ? req.file.filename : '';
     let clientComments      = req.body.comments;
     let clientCompany_id    = req.body.company;
 
@@ -104,10 +105,12 @@ app.post('/add-client', upload.single('photo'), (req, res) => {
 
 app.get('/edit-client/:id', (req, res) =>{
     let id = req.params.id;
+    let messages = req.query.m;
+    let status = req.query.s;
 
     db.query(`SELECT * FROM customers WHERE id = '${id}'`, (err, resp) => {
         if(!err) {
-            res.render('template/clients/edit-client', {edit : resp});
+            res.render('template/clients/edit-client', {edit : resp, messages, status});
         }
     });
 });
@@ -119,9 +122,9 @@ app.post('/edit-client/:id', (req, res) => {
     let clientSurname       = req.body.surname;
     let clientPhone         = req.body.phone;
     let clientEmail         = req.body.email;
-    let clientPhoto         = req.body.photo;
+    let clientPhoto         = (req.file) ? req.file.filename : '';
     let clientComments      = req.body.comments;
-    let clientCompany_id    = req.body.company_id;
+    let clientCompany_id    = req.body.company;
 
     db.query(`UPDATE customers SET name = '${clientName}', surname = '${clientSurname}', phone = '${clientPhone}', email = '${clientEmail}', photo = '${clientPhoto}', comments = '${clientComments}', company_id = '${clientCompany_id}' WHERE id = '${id}'`, (err, resp) => {
         if(!err) {
