@@ -4,29 +4,58 @@
     <div class="alert alert-{{status}}">{{messages}}</div>
 {{/if}}
 
+{{#if customers}}
+<div class="clearfix toolbar">
+    <form method="GET" action="/list-clients">
+        <div class="col-6">
+            <label><h6>Company filter</h6></label>
+            <select class="form-select" name="company_id" id="company_filter">
+                <option></option>
+                <option value="0">Unemployed</option>
+                {{#each companies}}
+                <option value="{{id}}"{{#if selected}}selected="selected"{{/if}}>{{name}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submt" class="btn btn-secondary mb-2 mt-2">Filter</button>
+        </div>
+    </form>
+</div>
+
 <table class="table table-striped text-center">
-    <tr>
+    <thead>
         <th>ID</th>
+        <th>Photo</th>
         <th>Name</th>
         <th>Surname</th>
         <th>Phone</th>
         <th>Email</th>
-        <th>Photo</th>
+        <th>Company</th>
         <th>Options</th>
-    </tr>
-
+    </thead>
+    
+    <tbody>
     {{#each customers}}
         <tr>
             <td>{{id}}</td>
+            <td><img class="logo" src="/uploads/{{photo}}" width="50px" height="50px" alt="photo"></td>
             <td>{{name}}</td>
             <td>{{surname}}</td>
             <td>{{phone}}</td>
             <td>{{email}}</td>
-            <td><img class="logo" src="/uploads/{{photo}}" width="50px" height="50px" alt="photo"></td>
+             <td>{{#if company}}{{company}}{{else}}Unemployed{{/if}}</td>
             <td>
                 <a href="/edit-client/{{id}}" class="btn btn-primary">Edit</a>
                 <a href="/delete-client/{{id}}" class="btn btn-danger btn-delete-client">Delete</a>
             </td>
         </tr>
     {{/each}}
+    </tbody>
 </table>
+
+{{else}}
+
+<h4>No such clients in database</h4>
+
+{{/if}}

@@ -4,7 +4,8 @@ const path = require('path');
 const db = require('../db/connection');
 const validator = require('validator');
 const multer  = require('multer');
-const e = require('express');
+const { fstat } = require('fs');
+
 const storage = multer.diskStorage({
     destination: 'uploads/',
     filename: function(req, file, callback) {
@@ -24,12 +25,48 @@ const upload = multer({
 
 app.get('/list-clients', (req, res) => {
 
+    let id = req.query.id;
     let messages = req.query.m;
     let status = req.query.s;
+    let company_id = req.query.company_id;
+    let where = (company_id) ? 'WHERE customers.company_id = ' + company_id : '';
 
-    db.query(`SELECT * FROM customers`, (err, resp) => {
+    db.query(`SELECT * FROM companies`, (err, companies) => {
+
         if(!err) {
-            res.render('template/clients/list-clients', {customers : resp, messages, status});
+
+            if(company_id) {
+
+                companies.forEach(function(val, index) {
+
+                if(company_id == val['id'])
+                    companies[index]['selected'] = true;
+                
+                });
+
+            }
+
+            db.query(`SELECT customers.id, customers.name, customers.surname, 
+            customers.phone, customers.email, customers.photo, 
+            customers.company_id, companies.name AS company
+            FROM customers LEFT JOIN companies 
+            ON customers.company_id = companies.id ${where} ORDER BY customers.id ASC`, (err, customers) => {
+
+                if(!err) {
+
+                    res.render('template/clients/list-clients', {customers, companies, messages, status});
+
+                } else {
+
+                    res.redirect('list-clients/?m=Something went wrong&s=danger');
+
+                }
+        }); 
+
+        } else {
+
+            res.redirect('/list-clients/?m=Something went wrong&s=danger');
+
         }
     });
 });
@@ -108,11 +145,35 @@ app.get('/edit-client/:id', (req, res) =>{
     let messages = req.query.m;
     let status = req.query.s;
 
-    db.query(`SELECT * FROM customers WHERE id = '${id}'`, (err, resp) => {
+    db.query(`SELECT * FROM customers WHERE id = '${id}'`, (err, customers) => {
         if(!err) {
-            res.render('template/clients/edit-client', {edit : resp, messages, status});
+            
+            db.query(`SELECT id, name FROM companies`, (err, companies) => {
+
+                customers = customers[0];
+
+                companies.forEach(function(val, index) {
+
+                    if(customers['company_id'] == val['id'])
+                        companies[index]['selected'] = true;
+                });
+
+                if(err) {
+                    res.render('template/clients/add-client', {customers, messages: 'Cannot get companies from database', status: 'danger'});
+                } else {
+                    res.render('template/clients/edit-client', {customers, companies, messages, status});
+                }
+                
+            });
+
+        } else {
+
+            res.redirect('/list-clients/?m=No such client&s=danger');
+
         }
+
     });
+
 });
 
 app.post('/edit-client/:id', (req, res) => {
@@ -136,13 +197,29 @@ app.post('/edit-client/:id', (req, res) => {
 app.get('/delete-client/:id', (req, res) => {
     let id = req.params.id;
 
-    db.query(`DELETE FROM customers WHERE id = '${id}'`, (err, resp) => {
+    
+
+    db.query(`SELECT photo FROM customers WHERE id = '${id}'`, (err, customer) => {
+        
         if(!err) {
-            res.redirect('/list-clients/?m=Company successfully deleted&s=success');
-        } else {
-            res.redirect('/list-clients/?m=Cannot delete entry&s=danger');
+
+        if(customer[0]['photo']) {
+            fs.unlink(__dirname + '../../uploads/' + customer[0]['photo'], err => {
+                if(err){
+                    res.redirect('/list-clients/?m=Failed to delete photo&s=danger')
+                }
+            });
         }
-    });
+
+        db.query(`DELETE FROM customers WHERE id = '${id}'`, (err, resp) => {
+            if(!err) {
+                res.redirect('/list-clients/?m=Company successfully deleted&s=success');
+            } else {
+                res.redirect('/list-clients/?m=Cannot delete entry&s=danger');
+            }
+        });
+        }
+    })
 });
 
 module.exports = app;

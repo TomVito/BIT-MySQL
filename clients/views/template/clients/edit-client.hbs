@@ -3,41 +3,39 @@
 {{#if messages}}
     <div class="alert alert-{{status}}">{{messages}}</div>
 {{/if}}
-{{#each edit}}
 <form method="post" action="/edit-client/{{id}}">
     <div class="mb-3">
         <label for="name" class="form-label">Name</label>
-        <input type="text" name="name" id="name" class="form-control" value="{{name}}" />
+        <input type="text" name="name" id="name" class="form-control" value="{{customers.name}}" />
     </div>
     <div class="mb-3">
         <label for="surname" class="form-label">Surname</label>
-        <input type="text" name="surname" id="surname" class="form-control" value="{{surname}}" />
+        <input type="text" name="surname" id="surname" class="form-control" value="{{customers.surname}}" />
     </div>
      <div class="mb-3">
         <label for="phoneess" class="form-label">Phone</label>
-        <input type="text" name="phone" id="phone" class="form-control" value="{{phone}}" />
+        <input type="text" name="phone" id="phone" class="form-control" value="{{customers.phone}}" />
     </div>
      <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input type="text" name="email" id="email" class="form-control" value="{{email}}" />
+        <input type="text" name="email" id="email" class="form-control" value="{{customers.email}}" />
     </div>
      <div class="mb-3">
         <label for="photo" class="form-label">Photo</label>
-        <input type="file" name="photo" id="photo" class="form-control" value="{{photo}}" />
+        <input type="file" name="photo" id="photo" class="form-control" value="{{customers.photo}}" />
     </div>
      <div class="mb-3">
         <label for="comments" class="form-label">Comments</label>
-        <input type="text" name="comments" id="comments" class="form-control" value="{{comments}}" />
+        <input type="text" name="comments" id="comments" class="form-control" value="{{customers.comments}}" />
     </div>
       <div class="mb-3">
         <label for="company" class="form-label">Company</label>
         <select name="company" id="company" class="form-control">
             <option value="0">Unemployed</option> 
             {{#each companies}}
-            <option value="{{id}}">{{name}}</option>
+            <option value="{{id}}"{{#if selected}}selected="selected"{{/if}}>{{name}}</option>
             {{/each}}
         </select>
     </div>
     <button type="submit" class="btn btn-primary">Add</button>
-{{/each}}
  </form>

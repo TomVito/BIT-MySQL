@@ -52,7 +52,7 @@ app.get('/list-companies', (req, res) => {
     let messages = req.query.m;
     let status = req.query.s;
 
-    db.query(`SELECT * FROM companies`, (err, resp) => {
+    db.query(`SELECT * FROM companies ORDER BY companies.id ASC`, (err, resp) => {
         if(!err) {
             res.render('template/company/list-companies', {companies : resp, messages, status});
         }

@@ -39,4 +39,23 @@ app.get('/', (req, res) => {
     res.render('template/index');
 });
 
+app.post('/login', (req, res) => {
+    let user = req.body.email;
+    let pass = req.body.password;
+
+    if(user && pass) {
+        
+        db.query(`SELECT * FROM users WHERE email = '${user}' AND password = '${pass}'`, (err, user) =>{
+            if(!err && user.length > 0) {
+
+                req.session.auth = true;
+
+            }
+        });
+    }
+
+    res.send('Connected successfully');
+
+});
+
 app.listen(3000);
