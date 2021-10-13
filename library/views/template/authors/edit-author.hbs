@@ -1,0 +1,16 @@
+<h1>Edit author</h1>
+<div class="pt-3"></div>
+{{#if messages}}
+    <div class="alert alert-{{status}}">{{messages}}</div>
+{{/if}}
+<form method="post" action="/edit-author/{{id}}">
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" name="name" id="name" class="form-control" value="{{authors.name}}" />
+    </div>
+    <div class="mb-3">
+        <label for="surname" class="form-label">Surname</label>
+        <input type="text" name="surname" id="surname" class="form-control" value="{{authors.surname}}" />
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+ </form>

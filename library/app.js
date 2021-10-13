@@ -3,8 +3,8 @@ const hbs = require('express-handlebars');
 const app = express();
 const path = require('path');
 const db = require('./db/connection')
-const companiesController = require('./controllers/companies');
-const clientsController = require('./controllers/clients');
+const authorsController = require('./controllers/books');
+const booksController = require('./controllers/authors');
 const session = require('express-session');
 const md5 = require('md5');
 
@@ -39,8 +39,8 @@ app.use('/uploads', express.static('uploads'));
 app.use('/static/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')));
 app.use('/static/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')));
 
-app.use('/', companiesController);
-app.use('/', clientsController);
+app.use('/', authorsController);
+app.use('/', booksController);
 
 app.get('/', (req, res) => { 
     if(req.session.auth) {

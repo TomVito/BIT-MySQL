@@ -4,7 +4,9 @@ const path = require('path');
 const db = require('../db/connection');
 const validator = require('validator');
 const multer  = require('multer');
-const { fstat } = require('fs');
+const md5 = require('md5');
+const fs = require('fs');
+const per_page    = 5;
 
 const storage = multer.diskStorage({
     destination: 'uploads/',
@@ -25,53 +27,82 @@ const upload = multer({
 
 app.get('/list-clients', (req, res) => {
 
-    let id = req.query.id;
-    let messages = req.query.m;
-    let status = req.query.s;
-    let company_id = req.query.company_id;
-    let where = (company_id) ? 'WHERE customers.company_id = ' + company_id : '';
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
 
-    db.query(`SELECT * FROM companies`, (err, companies) => {
+    let messages    = req.query.m;
+    let status      = req.query.s;
+    let company_id  = (req.query.company_id != -1) ? req.query.company_id : '';
+    let order_by    = req.query.order_by;
+    let position    = req.query.position;
+    let query_a     = (company_id) ? 'WHERE companies.company_id = ' + company_id : '';
+    let query_b     = (req.query.order_by && req.query.order_by != -1) ? 'ORDER BY customers.' + req.query.order_by : ''; 
+    let query_c     = '';
+   
+    if(req.query.position == 1)
+        query_c = 'ASC';
 
-        if(!err) {
+    if(req.query.position == 2)
+        query_c = 'DESC';
 
-            if(company_id) {
+    db.query(`SELECT COUNT(*) count FROM customers`, (err, kiekis) => {
+        let customers_count = kiekis[0].count;
+        let page_count = customers_count / per_page;
+        let pager = [];
 
-                companies.forEach(function(val, index) {
-
-                if(company_id == val['id'])
-                    companies[index]['selected'] = true;
-                
-                });
-
-            }
-
-            db.query(`SELECT customers.id, customers.name, customers.surname, 
-            customers.phone, customers.email, customers.photo, 
-            customers.company_id, companies.name AS company
-            FROM customers LEFT JOIN companies 
-            ON customers.company_id = companies.id ${where} ORDER BY customers.id ASC`, (err, customers) => {
-
-                if(!err) {
-
-                    res.render('template/clients/list-clients', {customers, companies, messages, status});
-
-                } else {
-
-                    res.redirect('list-clients/?m=Something went wrong&s=danger');
-
-                }
-        }); 
-
-        } else {
-
-            res.redirect('/list-clients/?m=Something went wrong&s=danger');
-
+        for(let i = 1; i <= page_count; i++){
+            pager.push(i);
         }
+
+        db.query(`SELECT * FROM companies`, (err, companies) => {
+
+            if(!err) {
+    
+                if(company_id) {
+    
+                    companies.forEach(function(val, index) {
+    
+                    if(company_id == val['id'])
+                        companies[index]['selected'] = true;
+                    
+                    });
+    
+                }
+                
+                db.query(`SELECT customers.id, customers.name, customers.surname, 
+                customers.phone, customers.email, customers.photo, 
+                customers.company_id, companies.name AS company
+                FROM customers LEFT JOIN companies
+                ON customers.company_id = companies.id ${query_a} ${query_b} ${query_c}`, (err, customers) => {
+    
+                    if(!err) {
+    
+                        res.render('template/clients/list-clients', {clients: customers, order_by, position, companies, pager, messages, status});
+    
+                        } else {
+    
+                        res.redirect('list-clients/?m=Something went wrong&s=danger');
+    
+                    }
+            });
+    
+            } else {
+    
+                res.redirect('/list-clients/?m=Something went wrong&s=danger');
+    
+            }
+        });
     });
 });
 
 app.get('/add-client', (req, res) => {
+
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
 
     db.query('SELECT id, name FROM companies', (err, resp) => {
         if(err) {
@@ -83,6 +114,11 @@ app.get('/add-client', (req, res) => {
 });
 
 app.post('/add-client', upload.single('photo'), (req, res) => {
+
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
 
     let clientName          = req.body.name;
     let clientSurname       = req.body.surname;
@@ -141,6 +177,12 @@ app.post('/add-client', upload.single('photo'), (req, res) => {
 });
 
 app.get('/edit-client/:id', (req, res) =>{
+
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
+
     let id = req.params.id;
     let messages = req.query.m;
     let status = req.query.s;
@@ -178,6 +220,11 @@ app.get('/edit-client/:id', (req, res) =>{
 
 app.post('/edit-client/:id', (req, res) => {
 
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
+
     let id                  = req.params.id;
     let clientName          = req.body.name;
     let clientSurname       = req.body.surname;
@@ -195,9 +242,13 @@ app.post('/edit-client/:id', (req, res) => {
 });
 
 app.get('/delete-client/:id', (req, res) => {
-    let id = req.params.id;
 
-    
+    if(!req.session.auth) {
+        res.redirect('/');
+        return;
+    }
+
+    let id = req.params.id;
 
     db.query(`SELECT photo FROM customers WHERE id = '${id}'`, (err, customer) => {
         
@@ -220,6 +271,48 @@ app.get('/delete-client/:id', (req, res) => {
         });
         }
     })
+});
+
+app.get('/register-client', (req, res) => {
+    res.render('template/clients/register-client');
+});
+
+app.post('/register-client', upload.single('photo'),  (req, res) => {
+    let userName    = req.body.name;
+    let userEmail   = req.body.email;
+    let userPass    = md5(req.body.password);
+
+    if(!validator.isAlpha(userName, 'en-US', {ignore: ' .ąĄčČęĘėĖįĮšŠųŲūŪ'})
+    || !validator.isLength(userName, {min: 3, max: 50})) {
+    res.redirect('/list-clients/?m=Enter name&s=danger'); 
+    return;
+    }
+
+    if(!validator.isEmail(userEmail)) {
+    res.redirect('/list-clients/?m=Enter email&s=danger');
+    return;
+    }
+
+    // if(!validator.isStrongPassword(userPass)) {
+    //     res.redirect('/list-clients/?m=Password is too weak&s=danger');
+    // return;
+    // }
+
+    db.query(`SELECT * FROM users WHERE name = '${userName}'`, (err, resp) => {
+        
+        if(resp.length == 0) {
+            
+            db.query(`INSERT INTO users (name, email, password) 
+                    VALUES ('${userName}' , '${userEmail}' , '${userPass}')`
+            , err => {
+                if(err) {
+                    console.log(err);
+                    return;
+                }
+                res.redirect('/list-clients/?m=Registration successful&s=success');
+            });
+        }
+    });
 });
 
 module.exports = app;

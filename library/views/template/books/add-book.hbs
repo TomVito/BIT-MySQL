@@ -1,0 +1,30 @@
+<h1>Add book</h1>
+<div class="pt-3"></div>
+<form method="post" action="/add-book">
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" name="title" id="title" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="pages" class="form-label">Pages</label>
+        <input type="text" name="pages" id="pages" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="isbn" class="form-label">ISBN</label>
+        <input type="text" name="isbn" id="isbn" class="form-control" value="" />
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <input type="text" name="description" id="description" class="form-control" value="" />
+    </div>
+     <div class="mb-3">
+        <label for="authors" class="form-label">Author</label>
+        <select name="authors" id="authors" class="form-control">
+            <option></option> 
+            {{#each authors}}
+            <option value="{{id}}">{{name}} {{surname}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+ </form>
