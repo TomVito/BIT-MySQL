@@ -3,8 +3,8 @@ const hbs = require('express-handlebars');
 const app = express();
 const path = require('path');
 const db = require('./db/connection')
-const authorsController = require('./controllers/books');
-const booksController = require('./controllers/authors');
+const booksController = require('./controllers/books');
+const authorsController = require('./controllers/authors');
 const session = require('express-session');
 const md5 = require('md5');
 
@@ -39,8 +39,8 @@ app.use('/uploads', express.static('uploads'));
 app.use('/static/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')));
 app.use('/static/js', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/js')));
 
-app.use('/', authorsController);
 app.use('/', booksController);
+app.use('/', authorsController);
 
 app.get('/', (req, res) => { 
     if(req.session.auth) {
@@ -82,4 +82,4 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-app.listen(3000);
+app.listen('3000');

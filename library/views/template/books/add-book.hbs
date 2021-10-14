@@ -14,12 +14,12 @@
         <input type="text" name="isbn" id="isbn" class="form-control" value="" />
     </div>
     <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <input type="text" name="description" id="description" class="form-control" value="" />
+        <label for="short_description" class="form-label">Description</label>
+        <input type="text" name="short_description" id="short_description" class="form-control" value="" />
     </div>
      <div class="mb-3">
-        <label for="authors" class="form-label">Author</label>
-        <select name="authors" id="authors" class="form-control">
+        <label for="author_id" class="form-label">Author</label>
+        <select name="author_id" id="author_id" class="form-control">
             <option></option> 
             {{#each authors}}
             <option value="{{id}}">{{name}} {{surname}}</option>

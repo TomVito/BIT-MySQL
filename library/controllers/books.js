@@ -27,18 +27,18 @@ app.post('/add-book', (req, res) => {
         return;
     }
     
-    let title       = req.body.title;
-    let pages       = req.body.pages;
-    let isbn        = req.body.isbn;
-    let description = req.body.short_description;
-    let author_id   = req.body.author;
+    let title               = req.body.title;
+    let pages               = req.body.pages;
+    let isbn                = req.body.isbn;
+    let short_description   = req.body.short_description;
+    let author_id           = req.body.author_id;
 
     db.query(`SELECT * FROM books WHERE title = '${title}'`, (err, resp) => {
 
         if(resp.length == 0) {
             
             db.query(`INSERT INTO books (title, pages, isbn, short_description, author_id) 
-                    VALUES ( '${title}' , '${pages}', '${isbn}' , '${description}' , '${author_id}')`
+                    VALUES ( '${title}' , '${pages}', '${isbn}' , '${short_description}' , '${author_id}')`
             , err => {
                 if(err) {
                     console.log(err);
@@ -57,9 +57,10 @@ app.get('/list-books', (req, res) => {
         return;
     }
 
-    let author_id = req.query.author_id;
+    let author_id = (req.query.author_id != -1) ? req.query.author_id : '';
     let messages = req.query.m;
     let status = req.query.s;
+    let query_a     = (author_id) ? 'WHERE books.author_id = ' + author_id : '';
 
     db.query(`SELECT * FROM authors`, (err, authors) => {
 
@@ -78,7 +79,7 @@ app.get('/list-books', (req, res) => {
 
             db.query(`SELECT books.id, books.title, books.pages, books.isbn, 
             books.short_description, books.author_id, authors.name AS name, authors.surname 
-            AS surname FROM books LEFT JOIN authors ON books.author_id = authors.id`, (err, books) => {
+            AS surname FROM books LEFT JOIN authors ON books.author_id = authors.id ${query_a} ORDER BY title ASC`, (err, books) => {
                 if(!err) {
 
                 res.render('template/books/list-books', {books, authors, messages, status});
@@ -110,18 +111,21 @@ app.get('/edit-book/:id', (req, res) =>{
     let status = req.query.s;
 
     db.query(`SELECT * FROM books WHERE id = '${id}'`, (err, books) => {
+        
         if(!err) {
             
             db.query(`SELECT id, name, surname FROM authors`, (err, authors) => {
 
+                books = books[0];
+                
                 authors.forEach(function(val, index) {
 
-                    if(authors['author_id'] == val['id'])
+                    if(books['author_id'] == val['id'])
                     authors[index]['selected'] = true;
                 });
 
                 if(err) {
-                    res.render('template/books/add-book', {books, messages: 'Cannot get companies from database', status: 'danger'});
+                    res.render('template/books/add-book', {books, messages: 'Cannot get books from database', status: 'danger'});
                 } else {
                     res.render('template/books/edit-book', {books, authors, messages, status});
                 }
@@ -138,37 +142,28 @@ app.get('/edit-book/:id', (req, res) =>{
 
 });
 
-app.post('/edit-company/:id', (req, res) => {
+app.post('/edit-book/:id', (req, res) => {
 
     if(!req.session.auth) {
         res.redirect('/');
         return;
     }
 
-    let id = req.params.id;
-    let companyName     = req.body.name;
-    let companyAddress  = req.body.address;
+    let id                  = req.params.id;
+    let title               = req.body.title;
+    let pages               = req.body.pages;
+    let isbn                = req.body.isbn;
+    let short_description   = req.body.short_description;
+    let author_id           = req.body.author;
 
-    if(!validator.isAlphanumeric(companyName, 'en-US', {ignore: ' .ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
-        || !validator.isLength(companyName, {min: 3, max: 50})) {
-        res.redirect('/edit-company/' + id +'/?m=Enter company name&s=danger'); 
-        return;
-    }
-
-    if(!validator.isAlphanumeric(companyAddress, 'en-US', {ignore: ' .ąĄčČęĘėĖįĮšŠųŲūŪ'}) 
-        || !validator.isLength(companyAddress, {min: 3, max: 100})) { 
-        res.redirect('/edit-company/' + id +'/?m=Enter company address&s=danger'); 
-        return;
-    }
-
-    db.query(`UPDATE companies SET name = '${companyName}', address = '${companyAddress}' WHERE id = '${id}'`, (err, resp) => {
+    db.query(`UPDATE books SET title = '${title}', pages = '${pages}', isbn = '${isbn}', short_description = '${short_description}', author_id = '${author_id}' WHERE id = '${id}'`, (err, resp) => {
         if(!err) {
-            res.redirect('/list-companies');
+            res.redirect('/list-books');
         }
     });
 });
 
-app.get('/delete-company/:id', (req, res) => {
+app.get('/delete-book/:id', (req, res) => {
 
     if(!req.session.auth) {
         res.redirect('/');
@@ -177,11 +172,11 @@ app.get('/delete-company/:id', (req, res) => {
     
     let id = req.params.id;
 
-    db.query(`DELETE FROM companies WHERE id = '${id}'`, (err, resp) => {
+    db.query(`DELETE FROM books WHERE id = '${id}'`, (err, resp) => {
         if(!err) {
-            res.redirect('/list-companies/?m=Company successfully deleted&s=success');
+            res.redirect('/list-books/?m=Book successfully deleted&s=success');
         } else {
-            res.redirect('/list-companies/?m=Cannot delete entry&s=danger');
+            res.redirect('/list-books/?m=Cannot delete book&s=danger');
         }
     });
 });

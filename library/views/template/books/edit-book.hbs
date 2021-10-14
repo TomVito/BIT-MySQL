@@ -3,7 +3,7 @@
 {{#if messages}}
     <div class="alert alert-{{status}}">{{messages}}</div>
 {{/if}}
-<form method="post" action="/edit-book/{{id}}">
+<form method="post" action="/edit-book/{{books.id}}">
     <div class="mb-3">
         <label for="title" class="form-label">Title</label>
         <input type="text" name="title" id="title" class="form-control" value="{{books.title}}" />
@@ -21,13 +21,13 @@
         <input type="text" name="short_description" id="short_description" class="form-control" value="{{books.short_description}}" />
     </div>
      <div class="mb-3">
-        <label for="authors" class="form-label">Author</label>
-        <select name="authors" id="authors" class="form-control">
+        <label for="author" class="form-label">Author</label>
+        <select name="author" id="author" class="form-control">
             <option value="0">Select author</option> 
             {{#each authors}}
             <option value="{{id}}"{{#if selected}}selected="selected"{{/if}}>{{name}} {{surname}}</option>
             {{/each}}
         </select>
     </div>
-    <button type="submit" class="btn btn-primary">Add</button>
+    <button type="submit" class="btn btn-primary">Edit</button>
  </form>
